@@ -31,12 +31,12 @@ jobs:
       neo4j:
         image: neo4j:2025-community
         env:
-          NEO4J_AUTH: neo4j/test
+          NEO4J_AUTH: neo4j/testpassword
         ports:
           - "7474:7474"
           - "7687:7687"
         options: >-
-          --health-cmd "cypher-shell -u neo4j -p test 'RETURN 1;'"
+          --health-cmd "cypher-shell -u neo4j -p testpassword 'RETURN 1;'"
           --health-interval 10s --health-timeout 10s --health-retries 10
     steps:
       - uses: actions/checkout@v4
@@ -74,5 +74,5 @@ jobs:
           MITONEXUS_REDIS_URL: redis://localhost:6379/0
           MITONEXUS_NEO4J_URI: bolt://localhost:7687
           MITONEXUS_NEO4J_USER: neo4j
-          MITONEXUS_NEO4J_PASSWORD: test
+          MITONEXUS_NEO4J_PASSWORD: testpassword
         run: pytest --cov=src --cov-report=term
