@@ -24,9 +24,7 @@ async def test_clinical_trials_search(httpx_mock: HTTPXMock) -> None:
                         },
                         "descriptionModule": {"briefSummary": "Trial summary."},
                         "conditionsModule": {"conditions": ["Mitochondrial Disease"]},
-                        "armsInterventionsModule": {
-                            "interventions": [{"name": "Elamipretide"}]
-                        },
+                        "armsInterventionsModule": {"interventions": [{"name": "Elamipretide"}]},
                     }
                 }
             ]

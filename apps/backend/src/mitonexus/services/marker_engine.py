@@ -171,7 +171,11 @@ class MarkerEngine:
 
         if status in {MarkerStatus.CRITICALLY_LOW, MarkerStatus.LOW, MarkerStatus.SUBOPTIMAL_LOW}:
             return definition.interpretations.get("low", definition.interpretations["optimal"])
-        if status in {MarkerStatus.CRITICALLY_HIGH, MarkerStatus.HIGH, MarkerStatus.SUBOPTIMAL_HIGH}:
+        if status in {
+            MarkerStatus.CRITICALLY_HIGH,
+            MarkerStatus.HIGH,
+            MarkerStatus.SUBOPTIMAL_HIGH,
+        }:
             return definition.interpretations.get("high", definition.interpretations["optimal"])
         return definition.interpretations["optimal"]
 
@@ -187,10 +191,16 @@ class MarkerEngine:
         critical_margin = span * 0.35
 
         if ref_min is not None and value < ref_min:
-            return MarkerStatus.CRITICALLY_LOW if value < ref_min - critical_margin else MarkerStatus.LOW
+            return (
+                MarkerStatus.CRITICALLY_LOW
+                if value < ref_min - critical_margin
+                else MarkerStatus.LOW
+            )
         if ref_max is not None and value > ref_max:
             return (
-                MarkerStatus.CRITICALLY_HIGH if value > ref_max + critical_margin else MarkerStatus.HIGH
+                MarkerStatus.CRITICALLY_HIGH
+                if value > ref_max + critical_margin
+                else MarkerStatus.HIGH
             )
         if opt_min is not None and value < opt_min:
             return MarkerStatus.SUBOPTIMAL_LOW
@@ -208,7 +218,11 @@ class MarkerEngine:
         return 1.0
 
     def _flag_for_status(self, status: MarkerStatus) -> MarkerFlag:
-        if status in {MarkerStatus.CRITICALLY_HIGH, MarkerStatus.HIGH, MarkerStatus.SUBOPTIMAL_HIGH}:
+        if status in {
+            MarkerStatus.CRITICALLY_HIGH,
+            MarkerStatus.HIGH,
+            MarkerStatus.SUBOPTIMAL_HIGH,
+        }:
             return "\u2191"
         if status in {MarkerStatus.CRITICALLY_LOW, MarkerStatus.LOW, MarkerStatus.SUBOPTIMAL_LOW}:
             return "\u2193"

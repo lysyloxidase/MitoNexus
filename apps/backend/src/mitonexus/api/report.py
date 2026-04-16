@@ -13,7 +13,7 @@ from mitonexus.db.session import get_session
 from mitonexus.models import AnalysisReport as AnalysisReportModel
 from mitonexus.schemas.blood_marker import MarkerAnalysis
 from mitonexus.schemas.cascade import CascadeAssessment
-from mitonexus.schemas.report import AnalysisReportPayload
+from mitonexus.schemas.report import AnalysisReportPayload, ReportStatus
 
 router = APIRouter(prefix="/api/v1/report", tags=["report"])
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
@@ -37,11 +37,15 @@ async def download_pdf(
     """Return the generated PDF when available."""
     report = await _get_report_or_404(session, report_id)
     if report.pdf_path is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Report PDF is not available.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Report PDF is not available."
+        )
 
     pdf_path = Path(report.pdf_path)
     if not pdf_path.exists():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Report PDF file not found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Report PDF file not found."
+        )
 
     return FileResponse(pdf_path, media_type="application/pdf", filename=pdf_path.name)
 
@@ -77,14 +81,10 @@ def _serialize_report(report: AnalysisReportModel) -> AnalysisReportPayload:
     cascade_items = raw_cascade_assessments if isinstance(raw_cascade_assessments, list) else []
 
     marker_analyses = [
-        MarkerAnalysis.model_validate(item)
-        for item in marker_items
-        if isinstance(item, dict)
+        MarkerAnalysis.model_validate(item) for item in marker_items if isinstance(item, dict)
     ]
     cascade_assessments = [
-        CascadeAssessment.model_validate(item)
-        for item in cascade_items
-        if isinstance(item, dict)
+        CascadeAssessment.model_validate(item) for item in cascade_items if isinstance(item, dict)
     ]
 
     public_therapy_plan = {
@@ -96,9 +96,13 @@ def _serialize_report(report: AnalysisReportModel) -> AnalysisReportPayload:
     return AnalysisReportPayload(
         report_id=report.id,
         patient_id=report.patient_id,
+        status=ReportStatus(report.status),
+        workflow_task_id=report.workflow_task_id,
+        error_message=report.error_message,
         mitoscore=report.mitoscore,
         mitoscore_components=report.mitoscore_components,
         affected_cascades=report.affected_cascades,
+        literature_evidence=report.literature_evidence,
         marker_analyses=marker_analyses,
         cascade_assessments=cascade_assessments,
         therapy_plan=public_therapy_plan,

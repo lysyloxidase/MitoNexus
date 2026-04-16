@@ -46,6 +46,9 @@ class Settings(BaseSettings):
     langfuse_secret_key: str | None = None
     langfuse_host: str = "http://localhost:3001"
 
+    # Report generation
+    report_output_dir: str = ".mitonexus/reports"
+
 
 @lru_cache
 def get_settings() -> Settings:

@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import Float, ForeignKey
+from sqlalchemy import Float, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -20,9 +20,17 @@ class AnalysisReport(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "analysis_reports"
 
     patient_id: Mapped[UUID] = mapped_column(ForeignKey("patients.id"))
+    status: Mapped[str] = mapped_column(String(32), default="processing", nullable=False)
+    workflow_task_id: Mapped[str | None] = mapped_column(String(255))
+    error_message: Mapped[str | None]
     mitoscore: Mapped[float | None] = mapped_column(Float)
     mitoscore_components: Mapped[dict[str, float] | None] = mapped_column(JSONB)
     affected_cascades: Mapped[list[str]] = mapped_column(JSONB, default=list, nullable=False)
+    literature_evidence: Mapped[list[dict[str, object]]] = mapped_column(
+        JSONB,
+        default=list,
+        nullable=False,
+    )
     therapy_plan: Mapped[dict[str, object] | None] = mapped_column(JSONB)
     pdf_path: Mapped[str | None]
     visualization_data: Mapped[dict[str, object] | None] = mapped_column(JSONB)

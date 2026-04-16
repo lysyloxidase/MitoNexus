@@ -134,3 +134,5 @@ class AnalysisResponse(BaseModel):
     """Response returned after a blood-test submission."""
 
     report_id: str
+    task_id: str
+    status: Literal["processing", "complete", "failed"]

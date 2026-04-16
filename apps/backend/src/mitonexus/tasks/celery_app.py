@@ -10,7 +10,7 @@ celery_app = Celery(
     "mitonexus",
     broker=str(settings.redis_url),
     backend=str(settings.redis_url),
-    include=["mitonexus.tasks.indexing"],
+    include=["mitonexus.tasks.analysis", "mitonexus.tasks.indexing"],
 )
 
 celery_app.conf.update(

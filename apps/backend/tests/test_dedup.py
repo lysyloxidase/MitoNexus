@@ -27,7 +27,9 @@ async def test_filter_publications_deduplicates_on_doi(db_session: AsyncSession)
         publication_date=datetime(2024, 1, 1, tzinfo=UTC),
         mesh_terms=["Mitochondria"],
         embedding=None,
-        content_hash=dedup.compute_content_hash("Existing title", "Existing abstract", "10.1000/duplicate"),
+        content_hash=dedup.compute_content_hash(
+            "Existing title", "Existing abstract", "10.1000/duplicate"
+        ),
     )
     db_session.add(existing_publication)
     await db_session.commit()

@@ -77,6 +77,8 @@ export type BloodTestInputPayload = {
 
 export type AnalysisResponse = {
   report_id: string;
+  task_id: string;
+  status: "processing" | "complete" | "failed";
 };
 
 export type MarkerAnalysis = {
@@ -114,12 +116,18 @@ export type CascadeAssessment = {
   therapeutic_targets: string[];
 };
 
+export type ReportStatus = "pending" | "processing" | "complete" | "failed";
+
 export type AnalysisReportPayload = {
   report_id: string;
   patient_id: string;
+  status: ReportStatus;
+  workflow_task_id: string | null;
+  error_message: string | null;
   mitoscore: number | null;
   mitoscore_components: Record<string, number> | null;
   affected_cascades: string[];
+  literature_evidence: Record<string, unknown>[];
   marker_analyses: MarkerAnalysis[];
   cascade_assessments: CascadeAssessment[];
   therapy_plan: Record<string, unknown> | null;

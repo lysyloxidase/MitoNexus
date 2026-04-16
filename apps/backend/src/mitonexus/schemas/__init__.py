@@ -16,7 +16,7 @@ from mitonexus.schemas.blood_marker import (
 )
 from mitonexus.schemas.cascade import CascadeAssessment, CascadeStatus
 from mitonexus.schemas.literature import ClinicalTrial, Paper
-from mitonexus.schemas.report import AnalysisReportPayload
+from mitonexus.schemas.report import AnalysisReportPayload, ReportStatus
 from mitonexus.schemas.therapy import (
     EvidenceLevel,
     TherapyCategory,
@@ -54,6 +54,7 @@ __all__ = [
     "Paper",
     "RangeBounds",
     "ReferenceRange",
+    "ReportStatus",
     "TherapyCategory",
     "TherapyRecommendation",
 ]

@@ -50,7 +50,10 @@ class DeduplicationService:
         content_hashes = [publication.content_hash for publication in publications]
 
         async with AsyncSessionLocal() as session:
-            filters = [Publication.external_id.in_(external_ids), Publication.content_hash.in_(content_hashes)]
+            filters = [
+                Publication.external_id.in_(external_ids),
+                Publication.content_hash.in_(content_hashes),
+            ]
             if doi_values:
                 filters.append(Publication.doi.in_(doi_values))
 
@@ -66,11 +69,19 @@ class DeduplicationService:
         new_publications: list[Publication] = []
 
         for publication in publications:
-            if publication.external_id in existing_external_ids or publication.external_id in seen_external_ids:
+            if (
+                publication.external_id in existing_external_ids
+                or publication.external_id in seen_external_ids
+            ):
                 continue
-            if publication.content_hash in existing_hashes or publication.content_hash in seen_hashes:
+            if (
+                publication.content_hash in existing_hashes
+                or publication.content_hash in seen_hashes
+            ):
                 continue
-            if publication.doi and (publication.doi in existing_dois or publication.doi in seen_dois):
+            if publication.doi and (
+                publication.doi in existing_dois or publication.doi in seen_dois
+            ):
                 continue
 
             new_publications.append(publication)

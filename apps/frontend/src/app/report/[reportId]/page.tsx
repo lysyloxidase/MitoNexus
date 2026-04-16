@@ -18,6 +18,7 @@ export default function ReportPage({ params }: ReportPageProps) {
   const reportQuery = useQuery({
     queryKey: ["report", params.reportId],
     queryFn: () => fetchJson<AnalysisReportPayload>(`/api/v1/report/${params.reportId}`),
+    refetchInterval: (query) => (query.state.data?.status === "processing" ? 3000 : false),
   });
 
   const report = reportQuery.data;
@@ -35,8 +36,7 @@ export default function ReportPage({ params }: ReportPageProps) {
               <p className="text-sm uppercase tracking-[0.25em] text-emerald-300/80">Report</p>
               <h1 className="mt-3 text-4xl font-semibold tracking-tight">Analysis overview</h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
-                This page reflects the stored report payload created by the Phase 3 blood-test
-                engine.
+                This page reflects the stored report payload created by the multi-agent workflow.
               </p>
             </div>
             <Link
@@ -54,6 +54,17 @@ export default function ReportPage({ params }: ReportPageProps) {
             {reportQuery.error instanceof Error
               ? reportQuery.error.message
               : "The report could not be loaded."}
+          </Alert>
+        ) : null}
+        {report?.status === "processing" ? (
+          <Alert>
+            Analysis is still running. This page will refresh automatically as the workflow
+            finishes.
+          </Alert>
+        ) : null}
+        {report?.status === "failed" ? (
+          <Alert tone="error">
+            {report.error_message ?? "The workflow failed before the report could be completed."}
           </Alert>
         ) : null}
 

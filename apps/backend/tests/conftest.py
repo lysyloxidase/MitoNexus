@@ -9,12 +9,8 @@ from alembic.config import Config
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
-from mitonexus.db.session import AsyncSessionLocal, engine
-from mitonexus.models import Base
 
-
-def pytest_sessionstart(session: pytest.Session) -> None:
-    del session
+def _configure_test_environment() -> None:
     os.environ.setdefault(
         "MITONEXUS_DATABASE_URL",
         os.getenv(
@@ -48,6 +44,14 @@ def pytest_sessionstart(session: pytest.Session) -> None:
     get_settings.cache_clear()
 
 
+_configure_test_environment()
+
+
+def pytest_sessionstart(session: pytest.Session) -> None:
+    del session
+    _configure_test_environment()
+
+
 @pytest.fixture(scope="session")
 def alembic_config() -> Config:
     backend_dir = Path(__file__).resolve().parents[1]
@@ -64,10 +68,14 @@ def prepared_database(alembic_config: Config) -> None:
 @pytest.fixture(scope="session")
 def db_engine(prepared_database: None) -> AsyncEngine:
     del prepared_database
+    from mitonexus.db.session import engine
+
     return engine
 
 
 async def _truncate_tables(db_engine: AsyncEngine) -> None:
+    from mitonexus.models import Base
+
     table_names = [table.name for table in reversed(Base.metadata.sorted_tables)]
     if not table_names:
         return
@@ -86,6 +94,8 @@ async def clean_database(db_engine: AsyncEngine) -> AsyncIterator[None]:
 
 @pytest_asyncio.fixture
 async def db_session() -> AsyncIterator[AsyncSession]:
+    from mitonexus.db.session import AsyncSessionLocal
+
     async with AsyncSessionLocal() as session:
         yield session
         await session.rollback()

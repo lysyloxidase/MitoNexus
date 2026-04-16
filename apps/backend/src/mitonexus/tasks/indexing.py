@@ -158,7 +158,7 @@ async def _index_europepmc_async() -> dict[str, int]:
     query = (
         "("
         + " OR ".join(f'"{keyword}"' for keyword in MITO_KEYWORDS)
-        + f') AND FIRST_PDATE:[{last_run.date().isoformat()} TO {today.date().isoformat()}]'
+        + f") AND FIRST_PDATE:[{last_run.date().isoformat()} TO {today.date().isoformat()}]"
     )
     dedup = DeduplicationService()
     embedder = EmbeddingService()
@@ -193,7 +193,16 @@ async def _refresh_mitocarta_async() -> dict[str, int]:
     async with SemanticScholarClient() as client:
         papers = await client.search_papers(
             query=MITOCARTA_QUERY,
-            fields=["title", "abstract", "authors", "year", "venue", "url", "citationCount", "externalIds"],
+            fields=[
+                "title",
+                "abstract",
+                "authors",
+                "year",
+                "venue",
+                "url",
+                "citationCount",
+                "externalIds",
+            ],
         )
 
     publications = [paper_to_publication(paper) for paper in papers]

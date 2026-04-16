@@ -25,3 +25,33 @@ class Publication(Base, UUIDMixin, TimestampMixin):
     mesh_terms: Mapped[list[str]] = mapped_column(JSONB, default=list, nullable=False)
     embedding: Mapped[list[float] | None] = mapped_column(Vector(768))
     content_hash: Mapped[str] = mapped_column(String(64), index=True)
+
+    def to_summary_dict(self) -> dict[str, object]:
+        """Return a lightweight literature summary payload."""
+        abstract_excerpt = None
+        if self.abstract:
+            abstract_excerpt = (
+                self.abstract[:317] + "..." if len(self.abstract) > 320 else self.abstract
+            )
+
+        return {
+            "publication_id": str(self.id),
+            "source": self.source,
+            "external_id": self.external_id,
+            "pmid": self.external_id if self.source == "pubmed" else None,
+            "doi": self.doi,
+            "title": self.title,
+            "abstract_excerpt": abstract_excerpt,
+            "publication_date": self.publication_date.isoformat()
+            if self.publication_date
+            else None,
+            "authors": self.authors,
+        }
+
+    def to_detail_dict(self) -> dict[str, object]:
+        """Return a richer evidence payload for reports and agents."""
+        return {
+            **self.to_summary_dict(),
+            "abstract": self.abstract,
+            "mesh_terms": self.mesh_terms,
+        }

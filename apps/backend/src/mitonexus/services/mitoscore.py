@@ -43,7 +43,9 @@ class MitoScoreCalculator:
         component_scores: dict[str, float] = {}
 
         for component in COMPONENTS:
-            selected = [by_marker[marker_id] for marker_id in component.markers if marker_id in by_marker]
+            selected = [
+                by_marker[marker_id] for marker_id in component.markers if marker_id in by_marker
+            ]
             if not selected:
                 continue
 
