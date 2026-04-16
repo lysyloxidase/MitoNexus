@@ -15,6 +15,7 @@ from mitonexus.schemas.blood_marker import (
     ReferenceRange,
 )
 from mitonexus.schemas.cascade import CascadeAssessment, CascadeStatus
+from mitonexus.schemas.literature import ClinicalTrial, Paper
 from mitonexus.schemas.report import AnalysisReportPayload
 from mitonexus.schemas.therapy import (
     EvidenceLevel,
@@ -36,6 +37,7 @@ __all__ = [
     "BloodTestInput",
     "CascadeAssessment",
     "CascadeStatus",
+    "ClinicalTrial",
     "ETCComplexState",
     "EvidenceLevel",
     "GraphEdge",
@@ -49,6 +51,7 @@ __all__ = [
     "MarkerStatus",
     "MitochondrionVisualization",
     "OptimalRange",
+    "Paper",
     "RangeBounds",
     "ReferenceRange",
     "TherapyCategory",
