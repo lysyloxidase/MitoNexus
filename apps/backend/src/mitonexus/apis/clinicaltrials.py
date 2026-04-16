@@ -62,8 +62,10 @@ class ClinicalTrialsClient(BaseAPIClient):
         nct_id = identification.get("nctId")
         title = identification.get("briefTitle")
         overall_status = status_module.get("overallStatus")
-        if not isinstance(nct_id, str) or not isinstance(title, str) or not isinstance(
-            overall_status, str
+        if (
+            not isinstance(nct_id, str)
+            or not isinstance(title, str)
+            or not isinstance(overall_status, str)
         ):
             return None
 
@@ -77,7 +79,9 @@ class ClinicalTrialsClient(BaseAPIClient):
         if isinstance(conditions_module, dict):
             condition_list = conditions_module.get("conditions")
             if isinstance(condition_list, list):
-                conditions = [str(condition) for condition in condition_list if str(condition).strip()]
+                conditions = [
+                    str(condition) for condition in condition_list if str(condition).strip()
+                ]
 
         interventions: list[str] = []
         if isinstance(arms_module, dict):

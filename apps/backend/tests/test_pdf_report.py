@@ -56,7 +56,10 @@ def build_report() -> AnalysisReport:
         patient=patient,
         status="complete",
         mitoscore=68.4,
-        mitoscore_components={"oxidative_stress_balance": 61.0, "energy_substrate_metabolism": 72.0},
+        mitoscore_components={
+            "oxidative_stress_balance": 61.0,
+            "energy_substrate_metabolism": 72.0,
+        },
         affected_cascades=["nrf2_keap1"],
         literature_evidence=[
             {

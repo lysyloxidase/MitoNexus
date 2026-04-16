@@ -195,29 +195,38 @@ class KnowledgeGraphBuilder:
                         centrality=0.5,
                         color=NODE_COLORS["cascade"],
                         size=NODE_BASE_SIZES["cascade"],
-                        abnormal=assessment is not None and assessment.status != CascadeStatus.OPTIMAL,
+                        abnormal=assessment is not None
+                        and assessment.status != CascadeStatus.OPTIMAL,
                         metadata={
                             "cascade_id": cascade_id,
-                            "status": assessment.status.value if assessment is not None else "optimal",
+                            "status": assessment.status.value
+                            if assessment is not None
+                            else "optimal",
                         },
                     ),
                 )
 
             if therapy_id:
                 recommendation = therapy_lookup.get(therapy_id)
-                therapy_label = self._read_label(therapy_data, fallback=therapy_id.replace("_", " "))
+                therapy_label = self._read_label(
+                    therapy_data, fallback=therapy_id.replace("_", " ")
+                )
                 self._upsert_node(
                     nodes,
                     GraphNode(
                         id=f"therapy:{therapy_id}",
                         type="therapy",
-                        label=recommendation.name if recommendation is not None else therapy_label.title(),
+                        label=recommendation.name
+                        if recommendation is not None
+                        else therapy_label.title(),
                         centrality=0.5,
                         color=NODE_COLORS["therapy"],
                         size=NODE_BASE_SIZES["therapy"],
                         metadata={
                             "therapy_id": therapy_id,
-                            "category": recommendation.category.value if recommendation is not None else None,
+                            "category": recommendation.category.value
+                            if recommendation is not None
+                            else None,
                         },
                     ),
                 )
@@ -228,7 +237,9 @@ class KnowledgeGraphBuilder:
                     GraphEdge(
                         source=f"marker:{marker_id}",
                         target=f"gene:{gene_id}",
-                        type=self._map_relation_type(record.get("marker_gene_relation"), fallback="regulation"),
+                        type=self._map_relation_type(
+                            record.get("marker_gene_relation"), fallback="regulation"
+                        ),
                         confidence=0.74,
                         color=EDGE_COLORS["regulation"],
                         width=1.7,
@@ -545,7 +556,9 @@ class KnowledgeGraphBuilder:
         component_spacing = 320.0
 
         for component_index, component in enumerate(components):
-            component_center_x = (component_index - ((len(components) - 1) / 2.0)) * component_spacing
+            component_center_x = (
+                component_index - ((len(components) - 1) / 2.0)
+            ) * component_spacing
             radius = 90.0 + (len(component) * 10.0)
             for node_index, node_id in enumerate(component):
                 angle = tau * (node_index / max(len(component), 1))
@@ -618,7 +631,11 @@ class KnowledgeGraphBuilder:
                     continue
                 visited.add(current)
                 component.append(current)
-                stack.extend(neighbor for neighbor in adjacency.get(current, set()) if neighbor not in visited)
+                stack.extend(
+                    neighbor
+                    for neighbor in adjacency.get(current, set())
+                    if neighbor not in visited
+                )
 
             components.append(sorted(component))
 

@@ -35,7 +35,9 @@ class SemanticScholarClient(BaseAPIClient):
         )
         payload = response.json()
         papers = payload.get("data", [])
-        return [paper for paper in (self._parse_paper(item) for item in papers) if paper is not None]
+        return [
+            paper for paper in (self._parse_paper(item) for item in papers) if paper is not None
+        ]
 
     def _parse_paper(self, item: dict[object, object]) -> Paper | None:
         paper_id = item.get("paperId")

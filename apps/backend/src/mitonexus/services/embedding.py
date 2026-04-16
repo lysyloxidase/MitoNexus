@@ -14,7 +14,7 @@ class _EmbeddableModel(Protocol):
 
 
 class _OllamaEmbeddingsClient(Protocol):
-    async def embed(self, model: str = "", input_text: str | list[str] = "") -> Any: ...
+    async def embed(self, model: str = "", input: str | list[str] = "") -> Any: ...
 
 
 class EmbeddingService:

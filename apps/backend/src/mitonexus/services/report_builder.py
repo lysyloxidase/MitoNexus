@@ -24,6 +24,7 @@ ETC_COMPLEX_MARKERS: dict[str, tuple[str, ...]] = {
     "V": ("insulin", "homa_ir", "potassium"),
 }
 
+
 def build_priority_therapy_entries(
     recommendations: list[TherapyRecommendation],
 ) -> list[dict[str, object]]:

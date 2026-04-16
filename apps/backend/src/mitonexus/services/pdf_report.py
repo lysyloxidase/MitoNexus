@@ -137,7 +137,9 @@ class PDFReportGenerator:
                 f"{assessment.impact_explanation}"
             )
         if not concerns:
-            concerns.append("No high-priority mitochondrial concerns were surfaced in the current panel.")
+            concerns.append(
+                "No high-priority mitochondrial concerns were surfaced in the current panel."
+            )
         return concerns
 
     def _build_strengths(
@@ -156,7 +158,9 @@ class PDFReportGenerator:
                 "The composite MitoScore suggests preserved mitochondrial reserve across the sampled panel."
             )
         if optimal_markers:
-            strengths.append(f"Markers currently sitting in the optimal band: {', '.join(optimal_markers)}.")
+            strengths.append(
+                f"Markers currently sitting in the optimal band: {', '.join(optimal_markers)}."
+            )
         if not strengths:
             strengths.append(
                 "Several systems still need attention, but the current panel leaves room for measurable improvement."
@@ -274,7 +278,7 @@ class PDFReportGenerator:
         component_lines = "".join(
             f"""
             <div class="component-chip">
-              <span>{label.replace('_', ' ')}</span>
+              <span>{label.replace("_", " ")}</span>
               <strong>{value:.0f}</strong>
             </div>
             """
@@ -320,7 +324,7 @@ class PDFReportGenerator:
               <div class="heatmap-bar">
                 <div class="heatmap-fill" style="width: {weights[cascade.status] * 100:.0f}%"></div>
               </div>
-              <strong>{cascade.status.value.replace('_', ' ')}</strong>
+              <strong>{cascade.status.value.replace("_", " ")}</strong>
             </div>
             """
             for cascade in cascades[:10]
@@ -363,7 +367,9 @@ class PDFReportGenerator:
         from reportlab.lib.styles import getSampleStyleSheet
         from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
-        cleaned_html = re.sub(r"</(p|div|section|article|li|h1|h2|h3|tr|br|table|header|footer)>", "\n", html)
+        cleaned_html = re.sub(
+            r"</(p|div|section|article|li|h1|h2|h3|tr|br|table|header|footer)>", "\n", html
+        )
         cleaned_html = re.sub(r"<[^>]+>", " ", cleaned_html)
         cleaned_html = unescape(cleaned_html)
         paragraphs = [line.strip() for line in cleaned_html.splitlines() if line.strip()]
@@ -372,7 +378,9 @@ class PDFReportGenerator:
         styles = getSampleStyleSheet()
         story: list[object] = []
         for line in paragraphs:
-            style_name = "Heading2" if line.isupper() or line.startswith("MitoNexus") else "BodyText"
+            style_name = (
+                "Heading2" if line.isupper() or line.startswith("MitoNexus") else "BodyText"
+            )
             story.append(Paragraph(line, styles[style_name]))
             story.append(Spacer(1, 6))
 

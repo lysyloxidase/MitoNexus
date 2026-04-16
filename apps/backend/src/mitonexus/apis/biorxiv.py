@@ -63,7 +63,9 @@ class BioRxivClient(BaseAPIClient):
         return publications
 
     def _parse_authors(self, author_text: str) -> list[str]:
-        return [author.strip() for author in author_text.replace(";", ",").split(",") if author.strip()]
+        return [
+            author.strip() for author in author_text.replace(";", ",").split(",") if author.strip()
+        ]
 
     def _parse_date(self, raw_date: object) -> datetime | None:
         if not isinstance(raw_date, str) or not raw_date:
