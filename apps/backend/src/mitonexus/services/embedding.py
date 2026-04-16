@@ -14,7 +14,7 @@ class _EmbeddableModel(Protocol):
 
 
 class _OllamaEmbeddingsClient(Protocol):
-    async def embed(self, model: str = "", input: str | list[str] = "") -> Any: ...
+    async def embed(self, model: str = "", **kwargs: Any) -> Any: ...
 
 
 class EmbeddingService:
@@ -66,7 +66,10 @@ class EmbeddingService:
     def _get_ollama_client(self) -> _OllamaEmbeddingsClient:
         if self._ollama_client is None:
             settings = get_settings()
-            self._ollama_client = OllamaAsyncClient(host=self._ollama_host or settings.ollama_host)
+            self._ollama_client = cast(
+                _OllamaEmbeddingsClient,
+                OllamaAsyncClient(host=self._ollama_host or settings.ollama_host),
+            )
         return self._ollama_client
 
     def _get_ollama_model_name(self) -> str:
