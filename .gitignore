@@ -24,6 +24,8 @@ pnpm-debug.log*
 .env.local
 .env.*.local
 apps/backend/.env
+.mitonexus/
+apps/backend/.mitonexus/
 
 # IDE
 .idea/

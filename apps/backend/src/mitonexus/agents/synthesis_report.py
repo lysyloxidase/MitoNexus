@@ -4,6 +4,7 @@ from pathlib import Path
 from uuid import UUID
 
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from mitonexus.agents.base import AgentExecutionContext, BaseAgent
 from mitonexus.agents.state import MitoNexusState
@@ -12,10 +13,10 @@ from mitonexus.db.session import AsyncSessionLocal
 from mitonexus.models import AnalysisReport
 from mitonexus.schemas.cascade import CascadeStatus
 from mitonexus.services import MitoScoreCalculator
+from mitonexus.services.pdf_report import PDFReportGenerator
 from mitonexus.services.report_builder import (
     build_therapy_plan,
     build_visualization_data,
-    generate_report_pdf,
 )
 from mitonexus.viz import KnowledgeGraphBuilder
 
@@ -76,30 +77,17 @@ therapy priorities, and the overall mitochondrial score without making unsupport
 
         settings = get_settings()
         output_dir = Path(settings.report_output_dir)
-        patient_age = state["patient_profile"].get("age")
-        patient_sex = state["patient_profile"].get("sex")
-        patient_test_date = state["patient_profile"].get("test_date")
-        pdf_path = generate_report_pdf(
-            output_dir=output_dir,
-            report_id=state["report_id"],
-            patient_age=patient_age if isinstance(patient_age, int) else 0,
-            patient_sex=patient_sex if isinstance(patient_sex, str) else "",
-            test_date=patient_test_date if isinstance(patient_test_date, str) else "",
-            mitoscore=mitoscore,
-            affected_cascades=affected_cascades,
-            summary=summary,
-            markers=state["marker_analyses"],
-            therapies=state["therapy_recommendations"],
-            evidence=state["literature_evidence"],
-        )
-
+        output_dir.mkdir(parents=True, exist_ok=True)
         report_id = UUID(state["report_id"])
         async with AsyncSessionLocal() as session:
             result = await session.execute(
-                select(AnalysisReport).where(AnalysisReport.id == report_id)
+                select(AnalysisReport)
+                .options(selectinload(AnalysisReport.patient))
+                .where(AnalysisReport.id == report_id)
             )
             report = result.scalar_one()
-            report.status = "complete"
+            pdf_path = output_dir / f"{report.id}.pdf"
+            report.status = "processing"
             report.error_message = None
             report.mitoscore = mitoscore
             report.mitoscore_components = mitoscore_components
@@ -107,13 +95,15 @@ therapy priorities, and the overall mitochondrial score without making unsupport
             report.literature_evidence = state["literature_evidence"]
             report.therapy_plan = therapy_plan
             report.visualization_data = visualization_data
-            report.pdf_path = pdf_path
+            report.pdf_path = str(pdf_path)
+            await PDFReportGenerator().generate(report, pdf_path)
+            report.status = "complete"
             await session.commit()
 
         return {
             "mitoscore": mitoscore,
             "visualization_data": visualization_data,
-            "pdf_path": pdf_path,
+            "pdf_path": str(pdf_path),
             "report_summary": summary,
             "completed_agents": [self.name],
             "messages": self.build_message(summary),

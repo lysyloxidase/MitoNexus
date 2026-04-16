@@ -9,7 +9,19 @@ from mitonexus.services import CascadeMapper, get_marker_engine
 
 
 @pytest.mark.anyio
-async def test_therapy_reasoning_prioritizes_homocysteine_support(db_session) -> None:
+async def test_therapy_reasoning_prioritizes_homocysteine_support(
+    db_session,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def fake_invoke_summary_llm(self, prompt: str, context) -> None:
+        del self, prompt, context
+        return None
+
+    monkeypatch.setattr(
+        "mitonexus.agents.base.BaseAgent.invoke_summary_llm",
+        fake_invoke_summary_llm,
+    )
+
     patient = Patient(age=46, sex="M", test_date=datetime(2026, 4, 16, tzinfo=UTC))
     report = AnalysisReport(
         patient=patient, status="processing", literature_evidence=[], affected_cascades=[]

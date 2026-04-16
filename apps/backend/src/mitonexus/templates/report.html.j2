@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>MitoNexus Report - {{ patient.id }}</title>
+  </head>
+  <body>
+    <header class="cover">
+      <div class="eyebrow">MitoNexus v1.0.0</div>
+      <h1>MitoNexus Personalized Mitochondrial Health Report</h1>
+      <p class="subtitle">
+        Patient {{ patient.id }} |
+        {% if patient.age %}{{ patient.age }} years{% endif %}
+        {% if patient.sex %} | Sex {{ patient.sex }}{% endif %}
+        {% if patient.test_date %} | Test date {{ patient.test_date }}{% endif %}
+      </p>
+      <p class="subtitle">Generated {{ generated_at.strftime("%Y-%m-%d %H:%M UTC") }}</p>
+      {{ mitoscore_chart|safe }}
+    </header>
+
+    <section class="executive-summary">
+      <h2>Executive Summary</h2>
+      <p>{{ executive_summary }}</p>
+      <div class="two-column">
+        <div class="summary-card">
+          <h3>Top Concerns</h3>
+          <ul>
+            {% for concern in top_concerns %}
+              <li>{{ concern }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="summary-card">
+          <h3>Protective Signals</h3>
+          <ul>
+            {% for strength in strengths %}
+              <li>{{ strength }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="markers">
+      <h2>Comprehensive Marker Analysis</h2>
+      {% if marker_analyses %}
+        {% for analysis in marker_analyses %}
+          <article class="marker-card status-{{ analysis.status }}">
+            <div class="card-header">
+              <h3>{{ analysis.marker_name }}</h3>
+              <span class="status-chip">{{ analysis.status.replace("_", " ") }}</span>
+            </div>
+            <div class="value-display">
+              <strong>{{ analysis.value }} {{ analysis.unit }}</strong>
+              <span class="reference">
+                Reference: {{ analysis.reference_min }} to {{ analysis.reference_max }}
+              </span>
+              <span class="reference">
+                Optimal: {{ analysis.optimal_min }} to {{ analysis.optimal_max }}
+              </span>
+            </div>
+            <p class="mito-interpretation">{{ analysis.mito_interpretation }}</p>
+            <p class="meta-line">
+              Cascades: {{ analysis.affected_cascades|join(", ") if analysis.affected_cascades else "None linked" }}
+            </p>
+            <p class="meta-line">
+              Genes: {{ analysis.affected_genes|join(", ") if analysis.affected_genes else "Not specified" }}
+            </p>
+            <p class="meta-line">
+              KEGG: {{ analysis.affected_kegg_pathways|join(", ") if analysis.affected_kegg_pathways else "Not specified" }}
+            </p>
+          </article>
+        {% endfor %}
+      {% else %}
+        <p>No marker analyses were attached to this report.</p>
+      {% endif %}
+    </section>
+
+    <section class="cascades">
+      <h2>Signaling Cascade Impact</h2>
+      {{ cascade_heatmap|safe }}
+      {% if cascade_assessments %}
+        {% for cascade in cascade_assessments %}
+          <article class="cascade-card">
+            <div class="card-header">
+              <h3>{{ cascade.name }}</h3>
+              <span class="status-chip">{{ cascade.status.replace("_", " ") }}</span>
+            </div>
+            <p>{{ cascade.impact_explanation }}</p>
+            <p class="meta-line">
+              Contributing markers: {{ cascade.contributing_markers|join(", ") if cascade.contributing_markers else "None" }}
+            </p>
+            <p class="meta-line">
+              Therapeutic targets: {{ cascade.therapeutic_targets|join(", ") if cascade.therapeutic_targets else "To be refined" }}
+            </p>
+          </article>
+        {% endfor %}
+      {% else %}
+        <p>No cascade assessments were attached to this report.</p>
+      {% endif %}
+    </section>
+
+    <section class="etc-complexes">
+      <h2>Electron Transport Chain Status</h2>
+      <div class="two-column">
+        {% for complex in etc_complexes %}
+          <article class="complex-card">
+            <div class="card-header">
+              <h3>Complex {{ complex.complex_id }}</h3>
+              <span class="status-chip">{{ "%.0f"|format(complex.activity * 100) }}%</span>
+            </div>
+            <div class="activity-bar">
+              <div class="fill" style="width: {{ complex.activity * 100 }}%"></div>
+            </div>
+            <p>{{ complex.explanation }}</p>
+            <p class="meta-line">
+              Contributing markers:
+              {{ complex.contributing_markers|join(", ") if complex.contributing_markers else "No direct pressure detected" }}
+            </p>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="therapy-plan">
+      <h2>Personalized Therapy Plan</h2>
+      {% if therapy_sections %}
+        {% for section in therapy_sections %}
+          <h3>{{ section.name }}</h3>
+          <table class="therapy-table">
+            <thead>
+              <tr>
+                <th>Therapy</th>
+                <th>Dosage</th>
+                <th>Mechanism</th>
+                <th>Evidence</th>
+                <th>Timeline</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for therapy in section.entries %}
+                <tr>
+                  <td>
+                    <strong>{{ therapy.name }}</strong>
+                    <div class="subtle">{{ therapy.fda_status }}</div>
+                  </td>
+                  <td>{{ therapy.dosage }}</td>
+                  <td>{{ therapy.mechanism_summary }}</td>
+                  <td>Level {{ therapy.evidence_level }}</td>
+                  <td>{{ therapy.expected_timeline }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endfor %}
+      {% else %}
+        <p>No therapy recommendations were attached to this report.</p>
+      {% endif %}
+    </section>
+
+    <section class="monitoring">
+      <h2>Monitoring Schedule</h2>
+      <ul>
+        {% for item in monitoring_plan %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <section class="references">
+      <h2>References</h2>
+      <ol>
+        {% for ref in all_references %}
+          <li>
+            <strong>{{ ref.label }}</strong><br>
+            <span>{{ ref.detail }}</span>
+          </li>
+        {% endfor %}
+      </ol>
+    </section>
+
+    <footer class="disclaimer">
+      <h3>Medical Disclaimer</h3>
+      <p>
+        This report is generated by MitoNexus, an AI-powered analysis tool, and is intended
+        for educational and informational purposes only. It is not medical advice and should
+        not be used as a substitute for consultation with qualified healthcare professionals.
+      </p>
+    </footer>
+  </body>
+</html>

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
 from uuid import UUID
 
-from jinja2 import Template
-
+from mitonexus.models import AnalysisReport, Patient
 from mitonexus.schemas.blood_marker import MarkerAnalysis, MarkerStatus
 from mitonexus.schemas.cascade import CascadeAssessment, CascadeStatus
 from mitonexus.schemas.therapy import TherapyRecommendation
@@ -14,6 +14,7 @@ from mitonexus.schemas.visualization import (
     KnowledgeGraphData,
     MitochondrionVisualization,
 )
+from mitonexus.services.pdf_report import PDFReportGenerator
 
 ETC_COMPLEX_MARKERS: dict[str, tuple[str, ...]] = {
     "I": ("homocysteine", "glucose", "ft3"),
@@ -22,118 +23,6 @@ ETC_COMPLEX_MARKERS: dict[str, tuple[str, ...]] = {
     "IV": ("rbc", "hgb", "de_ritis_ratio"),
     "V": ("insulin", "homa_ir", "potassium"),
 }
-
-REPORT_TEMPLATE = Template(
-    """
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <style>
-      body { font-family: Arial, sans-serif; color: #111827; margin: 32px; }
-      h1, h2, h3 { margin-bottom: 8px; }
-      p { line-height: 1.5; }
-      .meta { color: #4b5563; margin-bottom: 24px; }
-      .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-      .card { border: 1px solid #d1d5db; border-radius: 12px; padding: 14px; }
-      .pill { display: inline-block; margin-right: 6px; margin-bottom: 6px; padding: 4px 8px; border-radius: 999px; background: #ecfdf5; color: #065f46; font-size: 12px; }
-      table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-      th, td { border-bottom: 1px solid #e5e7eb; padding: 8px; text-align: left; vertical-align: top; }
-      .muted { color: #6b7280; font-size: 12px; }
-    </style>
-  </head>
-  <body>
-    <h1>MitoNexus Analysis Report</h1>
-    <p class="meta">
-      Report ID: {{ report_id }}<br />
-      Patient: {{ patient_age }} years, {{ patient_sex }}<br />
-      Test date: {{ test_date }}
-    </p>
-
-    <div class="grid">
-      <div class="card">
-        <h2>MitoScore</h2>
-        <p>{{ mitoscore }}</p>
-      </div>
-      <div class="card">
-        <h2>Affected cascades</h2>
-        {% for cascade in affected_cascades %}
-        <span class="pill">{{ cascade }}</span>
-        {% endfor %}
-      </div>
-    </div>
-
-    <h2>Executive summary</h2>
-    <p>{{ summary }}</p>
-
-    <h2>Priority therapies</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Therapy</th>
-          <th>Category</th>
-          <th>Priority</th>
-          <th>Mechanism</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for therapy in therapies %}
-        <tr>
-          <td>{{ therapy.name }}</td>
-          <td>{{ therapy.category }}</td>
-          <td>{{ therapy.priority_score }}</td>
-          <td>{{ therapy.mechanism_summary }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    <h2>Key abnormal markers</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Marker</th>
-          <th>Status</th>
-          <th>Value</th>
-          <th>Mito interpretation</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for marker in markers %}
-        <tr>
-          <td>{{ marker.marker_name }}</td>
-          <td>{{ marker.status }}</td>
-          <td>{{ marker.value }} {{ marker.unit }}</td>
-          <td>{{ marker.mito_interpretation }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    <h2>Literature evidence</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Source</th>
-          <th>Title</th>
-          <th>External ID</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for publication in evidence %}
-        <tr>
-          <td>{{ publication.source }}</td>
-          <td>{{ publication.title }}</td>
-          <td>{{ publication.external_id or publication.pmid }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </body>
-</html>
-"""
-)
-
 
 def build_priority_therapy_entries(
     recommendations: list[TherapyRecommendation],
@@ -306,22 +195,35 @@ def generate_report_pdf(
     therapies: list[TherapyRecommendation],
     evidence: list[dict[str, object]],
 ) -> str:
-    """Render a concise PDF report and return its path."""
+    """Render a PDF report through the templated generator and return its path."""
     output_dir.mkdir(parents=True, exist_ok=True)
     pdf_path = output_dir / f"{report_id}.pdf"
-    html = REPORT_TEMPLATE.render(
-        report_id=str(report_id),
-        patient_age=patient_age,
-        patient_sex=patient_sex,
-        test_date=test_date,
-        mitoscore=round(mitoscore, 2),
-        affected_cascades=affected_cascades,
-        summary=summary,
-        markers=markers[:12],
-        therapies=therapies[:8],
-        evidence=evidence[:10],
+    patient = Patient(
+        age=patient_age,
+        sex=patient_sex,
+        test_date=datetime.fromisoformat(test_date) if test_date else datetime.utcnow(),
     )
-    from weasyprint import HTML
+    report = AnalysisReport(
+        patient=patient,
+        status="complete",
+        mitoscore=round(mitoscore, 2),
+        mitoscore_components={},
+        affected_cascades=affected_cascades,
+        literature_evidence=evidence,
+        therapy_plan={
+            "summary": summary,
+            "recommendations": [therapy.model_dump(mode="json") for therapy in therapies],
+            "marker_analyses": [marker.model_dump(mode="json") for marker in markers],
+            "cascade_assessments": [],
+            "monitoring_plan": build_monitoring_plan(markers, therapies),
+        },
+        visualization_data={
+            "mitochondrion": build_mitochondrion_visualization(markers, mitoscore),
+        },
+        pdf_path=str(pdf_path),
+    )
 
-    HTML(string=html).write_pdf(pdf_path)
+    generator = PDFReportGenerator()
+    html = generator.render_html(report)
+    generator._write_pdf(html, pdf_path, generator._templates_dir / "report.css")
     return str(pdf_path)

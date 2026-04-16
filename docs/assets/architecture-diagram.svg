@@ -1,0 +1,62 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">MitoNexus architecture diagram</title>
+  <desc id="desc">System diagram showing the Next.js frontend, FastAPI backend, LangGraph agents, Celery workers, Postgres, Neo4j, Redis, Ollama, and Langfuse.</desc>
+  <rect width="1200" height="700" rx="36" fill="#071426"/>
+  <text x="72" y="84" fill="#8BE3D2" font-size="18" font-family="Segoe UI, Arial, sans-serif" letter-spacing="5">ARCHITECTURE OVERVIEW</text>
+  <text x="72" y="132" fill="white" font-size="42" font-weight="700" font-family="Segoe UI, Arial, sans-serif">MitoNexus full-stack data flow</text>
+
+  <g fill="#0F1C30" stroke="#23344B">
+    <rect x="72" y="196" width="250" height="108" rx="24"/>
+    <rect x="72" y="356" width="250" height="108" rx="24"/>
+    <rect x="386" y="196" width="250" height="108" rx="24"/>
+    <rect x="386" y="356" width="250" height="108" rx="24"/>
+    <rect x="700" y="142" width="206" height="82" rx="22"/>
+    <rect x="700" y="254" width="206" height="82" rx="22"/>
+    <rect x="700" y="366" width="206" height="82" rx="22"/>
+    <rect x="700" y="478" width="206" height="82" rx="22"/>
+    <rect x="960" y="196" width="170" height="82" rx="22"/>
+    <rect x="960" y="310" width="170" height="82" rx="22"/>
+    <rect x="960" y="424" width="170" height="82" rx="22"/>
+  </g>
+
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="112" y="240" fill="#93C5FD" font-size="16" letter-spacing="2">NEXT.JS 15</text>
+    <text x="112" y="270" fill="white" font-size="28" font-weight="700">Frontend</text>
+    <text x="112" y="292" fill="#CBD5E1" font-size="16">Analyze form, 3D graph,</text>
+    <text x="112" y="314" fill="#CBD5E1" font-size="16">mitochondrion view, report UI</text>
+
+    <text x="112" y="400" fill="#8BE3D2" font-size="16" letter-spacing="2">SHARED TYPES</text>
+    <text x="112" y="430" fill="white" font-size="28" font-weight="700">Contracts</text>
+    <text x="112" y="452" fill="#CBD5E1" font-size="16">Typed API and visualization</text>
+    <text x="112" y="474" fill="#CBD5E1" font-size="16">payloads across workspaces</text>
+
+    <text x="426" y="240" fill="#8BE3D2" font-size="16" letter-spacing="2">FASTAPI</text>
+    <text x="426" y="270" fill="white" font-size="28" font-weight="700">Backend API</text>
+    <text x="426" y="292" fill="#CBD5E1" font-size="16">Blood-test intake, report API,</text>
+    <text x="426" y="314" fill="#CBD5E1" font-size="16">PDF delivery, health checks</text>
+
+    <text x="426" y="400" fill="#FDE68A" font-size="16" letter-spacing="2">LANGGRAPH + CELERY</text>
+    <text x="426" y="430" fill="white" font-size="28" font-weight="700">Agent Runtime</text>
+    <text x="426" y="452" fill="#CBD5E1" font-size="16">Supervisor, biomarker, literature,</text>
+    <text x="426" y="474" fill="#CBD5E1" font-size="16">therapy, synthesis workers</text>
+
+    <text x="732" y="190" fill="#C4B5FD" font-size="14" letter-spacing="2">POSTGRES + PGVECTOR</text>
+    <text x="732" y="306" fill="#FCA5A5" font-size="14" letter-spacing="2">REDIS</text>
+    <text x="732" y="418" fill="#93C5FD" font-size="14" letter-spacing="2">NEO4J</text>
+    <text x="732" y="530" fill="#8BE3D2" font-size="14" letter-spacing="2">OLLAMA</text>
+
+    <text x="990" y="242" fill="#FDE68A" font-size="14" letter-spacing="2">LANGFUSE</text>
+    <text x="990" y="356" fill="#93C5FD" font-size="14" letter-spacing="2">PUBLIC APIS</text>
+    <text x="990" y="470" fill="#8BE3D2" font-size="14" letter-spacing="2">WEASYPRINT</text>
+  </g>
+
+  <g stroke-linecap="round" stroke-width="4">
+    <path d="M322 250H386" stroke="#38BDF8"/>
+    <path d="M322 410H386" stroke="#8BE3D2"/>
+    <path d="M636 250H700" stroke="#14B8A6"/>
+    <path d="M636 410H700" stroke="#F59E0B"/>
+    <path d="M906 182H960" stroke="#FDE68A"/>
+    <path d="M906 294H960" stroke="#93C5FD"/>
+    <path d="M906 406H960" stroke="#14B8A6"/>
+  </g>
+</svg>

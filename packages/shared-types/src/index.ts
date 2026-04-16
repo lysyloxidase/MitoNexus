@@ -163,10 +163,18 @@ export type ETCComplexState = {
   explanation: string;
 };
 
+export type MitochondrionAnnotation = {
+  marker_id?: string;
+  label?: string;
+  status?: string;
+  explanation?: string;
+  [key: string]: unknown;
+};
+
 export type MitochondrionVisualization = {
   etc_complexes: ETCComplexState[];
   overall_health: number;
-  annotations: Record<string, unknown>[];
+  annotations: MitochondrionAnnotation[];
 };
 
 export type ReportVisualizationPayload = {

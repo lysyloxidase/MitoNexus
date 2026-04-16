@@ -5,6 +5,7 @@ from mitonexus.services.dedup import DeduplicationService
 from mitonexus.services.embedding import EmbeddingService
 from mitonexus.services.marker_engine import MarkerEngine, get_marker_engine
 from mitonexus.services.mitoscore import MitoScoreCalculator
+from mitonexus.services.pdf_report import PDFReportGenerator
 from mitonexus.services.report_builder import (
     build_monitoring_plan,
     build_priority_therapy_entries,
@@ -26,6 +27,7 @@ __all__ = [
     "EmbeddingService",
     "MarkerEngine",
     "MitoScoreCalculator",
+    "PDFReportGenerator",
     "build_monitoring_plan",
     "build_priority_therapy_entries",
     "build_recommendation",

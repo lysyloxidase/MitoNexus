@@ -31,6 +31,12 @@ export default async function ReportGraphPage({ params }: GraphPageProps) {
               Back to report
             </Link>
             <Link
+              className="inline-flex items-center justify-center rounded-full border border-cyan-300/25 bg-cyan-400/10 px-5 py-3 text-sm font-semibold text-cyan-50 transition hover:bg-cyan-400/20"
+              href={`/report/${reportId}/mitochondrion`}
+            >
+              Open mitochondrion
+            </Link>
+            <Link
               className="inline-flex items-center justify-center rounded-full bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_18px_45px_-22px_rgba(16,185,129,0.9)] transition hover:bg-emerald-400"
               href="/analyze"
             >

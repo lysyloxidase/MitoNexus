@@ -2,19 +2,22 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from functools import lru_cache
 from time import perf_counter
 from typing import Any, ClassVar
 from uuid import UUID
 
+import httpx
 from fastapi.encoders import jsonable_encoder
 from langchain_core.messages import AIMessage, BaseMessage
 from langchain_core.tools import BaseTool
 from langchain_ollama import ChatOllama
+from sqlalchemy import select
 
 from mitonexus.agents.state import MitoNexusState
 from mitonexus.config import get_settings
 from mitonexus.db.session import AsyncSessionLocal
-from mitonexus.models import AgentRun
+from mitonexus.models import AgentRun, AnalysisReport
 from mitonexus.observability.langfuse_setup import get_langfuse_callback
 
 
@@ -31,6 +34,33 @@ def _serialize_messages(messages: list[BaseMessage]) -> list[dict[str, object]]:
     """Convert LangChain messages to JSON-compatible dicts."""
     encoded = jsonable_encoder(messages)
     return encoded if isinstance(encoded, list) else []
+
+
+@lru_cache(maxsize=16)
+def _resolve_ollama_model(
+    requested_model: str,
+    base_url: str,
+    fallback_primary: str,
+    fallback_router: str,
+) -> str:
+    """Return an available Ollama model, falling back when the requested model is absent."""
+    try:
+        response = httpx.get(f"{base_url.rstrip('/')}/api/tags", timeout=2.0)
+        response.raise_for_status()
+        payload = response.json()
+    except Exception:
+        return requested_model
+
+    raw_models = payload.get("models", [])
+    available_models = {
+        str(model.get("name", ""))
+        for model in raw_models
+        if isinstance(model, dict) and isinstance(model.get("name"), str)
+    }
+    for candidate in (requested_model, fallback_primary, fallback_router):
+        if candidate in available_models:
+            return candidate
+    return requested_model
 
 
 class BaseAgent(ABC):
@@ -82,8 +112,14 @@ class BaseAgent(ABC):
             return None
         if self._llm is None:
             settings = get_settings()
+            resolved_model = _resolve_ollama_model(
+                self.model_name,
+                settings.ollama_host,
+                settings.model_primary,
+                settings.model_router,
+            )
             llm: Any = ChatOllama(
-                model=self.model_name,
+                model=resolved_model,
                 base_url=settings.ollama_host,
                 temperature=self.temperature,
             )
@@ -167,6 +203,11 @@ class BaseAgent(ABC):
         serialized_output = jsonable_encoder(output) if output is not None else None
 
         async with AsyncSessionLocal() as session:
+            report_exists = await session.scalar(
+                select(AnalysisReport.id).where(AnalysisReport.id == UUID(report_id))
+            )
+            if report_exists is None:
+                return
             session.add(
                 AgentRun(
                     report_id=UUID(report_id),
@@ -178,4 +219,7 @@ class BaseAgent(ABC):
                     langfuse_trace_id=context.langfuse_trace_id,
                 )
             )
-            await session.commit()
+            try:
+                await session.commit()
+            except Exception:
+                await session.rollback()

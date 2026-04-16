@@ -45,6 +45,20 @@ export function ReportOverviewPage({ reportId }: ReportOverviewPageProps) {
                 Open 3D graph
               </Link>
               <Link
+                className="inline-flex w-fit items-center justify-center rounded-full border border-cyan-300/25 bg-cyan-400/10 px-5 py-3 text-sm font-semibold text-cyan-50 transition hover:bg-cyan-400/20"
+                href={`/report/${reportId}/mitochondrion`}
+              >
+                Open 3D mitochondrion
+              </Link>
+              {report?.pdf_path ? (
+                <Link
+                  className="inline-flex w-fit items-center justify-center rounded-full border border-amber-300/20 bg-amber-400/10 px-5 py-3 text-sm font-semibold text-amber-50 transition hover:bg-amber-400/20"
+                  href={`/api/v1/report/${reportId}/pdf`}
+                >
+                  Download PDF
+                </Link>
+              ) : null}
+              <Link
                 className="inline-flex w-fit items-center justify-center rounded-full bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_18px_45px_-22px_rgba(16,185,129,0.9)] transition hover:bg-emerald-400"
                 href="/analyze"
               >
@@ -130,24 +144,46 @@ export function ReportOverviewPage({ reportId }: ReportOverviewPageProps) {
               </Card>
             </div>
 
-            <Card className="overflow-hidden border-sky-400/10 bg-[radial-gradient(circle_at_top_right,_rgba(14,165,233,0.16),_transparent_28%),linear-gradient(180deg,_rgba(15,23,42,0.98),_rgba(2,6,23,0.94))]">
-              <CardHeader>
-                <CardDescription>Interactive visualization</CardDescription>
-                <CardTitle>3D knowledge graph</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <p className="max-w-2xl text-sm leading-7 text-slate-300">
-                  Explore the patient-specific marker → gene → cascade → therapy network in a
-                  full-screen 3D scene, with node detail overlays and precomputed layout clustering.
-                </p>
-                <Link
-                  className="inline-flex w-fit items-center justify-center rounded-full border border-sky-300/25 bg-sky-400/10 px-5 py-3 text-sm font-semibold text-sky-50 transition hover:bg-sky-400/20"
-                  href={`/report/${reportId}/graph`}
-                >
-                  Launch graph explorer
-                </Link>
-              </CardContent>
-            </Card>
+            <div className="grid gap-6 lg:grid-cols-2">
+              <Card className="overflow-hidden border-sky-400/10 bg-[radial-gradient(circle_at_top_right,_rgba(14,165,233,0.16),_transparent_28%),linear-gradient(180deg,_rgba(15,23,42,0.98),_rgba(2,6,23,0.94))]">
+                <CardHeader>
+                  <CardDescription>Interactive visualization</CardDescription>
+                  <CardTitle>3D knowledge graph</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                  <p className="max-w-2xl text-sm leading-7 text-slate-300">
+                    Explore the patient-specific marker to gene to cascade to therapy network in a
+                    full-screen 3D scene, with node detail overlays and precomputed layout
+                    clustering.
+                  </p>
+                  <Link
+                    className="inline-flex w-fit items-center justify-center rounded-full border border-sky-300/25 bg-sky-400/10 px-5 py-3 text-sm font-semibold text-sky-50 transition hover:bg-sky-400/20"
+                    href={`/report/${reportId}/graph`}
+                  >
+                    Launch graph explorer
+                  </Link>
+                </CardContent>
+              </Card>
+
+              <Card className="overflow-hidden border-cyan-400/10 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.18),_transparent_30%),linear-gradient(180deg,_rgba(15,23,42,0.98),_rgba(2,6,23,0.94))]">
+                <CardHeader>
+                  <CardDescription>Structural visualization</CardDescription>
+                  <CardTitle>3D mitochondrion overlay</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                  <p className="max-w-2xl text-sm leading-7 text-slate-300">
+                    Review ETC complex activity, membrane-level context, and the patient-specific
+                    annotation overlay while the production GLB pipeline is finalized.
+                  </p>
+                  <Link
+                    className="inline-flex w-fit items-center justify-center rounded-full border border-cyan-300/25 bg-cyan-400/10 px-5 py-3 text-sm font-semibold text-cyan-50 transition hover:bg-cyan-400/20"
+                    href={`/report/${reportId}/mitochondrion`}
+                  >
+                    Launch mitochondrion view
+                  </Link>
+                </CardContent>
+              </Card>
+            </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
               <Card>

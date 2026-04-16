@@ -10,44 +10,66 @@
 
 ## Local Setup
 
-### Backend
+### 1. Install workspace dependencies
 
 ```bash
 cd apps/backend
 uv pip install -e ".[dev]"
-pytest
+cd ../frontend
+pnpm install
+cd ../..
 ```
 
-### Frontend
+### 2. Start infrastructure
 
 ```bash
-cd apps/frontend
-pnpm install
-pnpm type-check
+docker compose up -d --build
+```
+
+If default ports are busy, place `MX_*` overrides in a local root `.env` file. This repository
+already supports remapped host ports without changing the committed compose file.
+
+### 3. Run the app surfaces
+
+```bash
+uv run --directory apps/backend uvicorn mitonexus.main:app --reload
+pnpm --filter @mitonexus/frontend dev
+```
+
+### 4. Optional end-to-end demo
+
+```bash
+uv run --directory apps/backend python scripts/demo.py
 ```
 
 ## Common Tasks
 
-- Start local stack: `docker compose up -d --build`
-- Stop local stack: `./infrastructure/scripts/dev-down.sh`
-- Pull Ollama models: `./infrastructure/docker/ollama/pull-models.sh`
-- Lint backend: `cd apps/backend && ruff check . && ruff format --check .`
-- Type-check backend: `cd apps/backend && mypy src`
-- Lint frontend: `cd apps/frontend && pnpm lint`
-- Type-check frontend: `cd apps/frontend && pnpm type-check`
-- Run frontend tests: `cd apps/frontend && pnpm test`
+- Backend lint: `uv run --directory apps/backend ruff check .`
+- Backend format check: `uv run --directory apps/backend ruff format --check .`
+- Backend type-check: `uv run --directory apps/backend mypy src`
+- Backend tests: `uv run --directory apps/backend pytest -q`
+- Frontend lint: `pnpm --filter @mitonexus/frontend lint`
+- Frontend type-check: `pnpm --filter @mitonexus/frontend type-check`
+- Frontend tests: `pnpm --filter @mitonexus/frontend test`
+- Frontend production build: `pnpm --filter @mitonexus/frontend build`
+- Database migrations: `uv run --directory apps/backend alembic upgrade head`
 
 ## Quality Gates
 
-1. `cd apps/backend && uv pip install -e ".[dev]" && ruff check . && mypy src && pytest`
-2. `cd apps/frontend && pnpm install && biome check . && pnpm type-check`
-3. `docker compose up -d --build`
-4. `curl http://localhost:8000/health`
+1. `uv run --directory apps/backend ruff check .`
+2. `uv run --directory apps/backend mypy src`
+3. `uv run --directory apps/backend pytest --cov=src --cov-report=term`
+4. `pnpm --filter @mitonexus/frontend lint`
+5. `pnpm --filter @mitonexus/frontend type-check`
+6. `pnpm --filter @mitonexus/frontend test`
+7. `docker compose up -d`
+8. `curl http://localhost:8000/health`
 
-## Notes
+## Manual Smoke Path
 
-- `seed-db.sh` is a deliberate placeholder until application schemas and fixtures exist.
-- `apps/backend/.env` can be created from the root `.env.example` for local, non-Docker runs.
-- Docker Compose injects backend service configuration directly for the local stack.
-- If default host ports are already occupied, set `MX_*` variables in a root `.env` file to remap
-  Docker ports without changing the committed compose file.
+1. Open `http://localhost:3000/analyze`
+2. Submit a sample blood panel
+3. Wait for the report overview to leave the `processing` state
+4. Open `/report/{reportId}/graph`
+5. Open `/report/{reportId}/mitochondrion`
+6. Download `/api/v1/report/{reportId}/pdf`

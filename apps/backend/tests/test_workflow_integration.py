@@ -10,6 +10,7 @@ from langchain_core.messages import AIMessage
 from mitonexus.agents.literature_retrieval import LiteratureRetrievalAgent
 from mitonexus.agents.workflow import build_workflow
 from mitonexus.models import AnalysisReport, BloodTest, Patient
+from mitonexus.services.pdf_report import PDFReportGenerator
 from mitonexus.tasks.analysis import _run_analysis_workflow_async
 
 
@@ -56,11 +57,14 @@ async def test_workflow_integration_persists_completed_report(
             "messages": [AIMessage(content="Retrieved 1 local evidence item.")],
         }
 
-    def fake_generate_report_pdf(**kwargs) -> str:
-        del kwargs
-        pdf_path = tmp_path / "report.pdf"
-        pdf_path.write_bytes(b"%PDF-1.4\n%mock\n")
-        return str(pdf_path)
+    async def fake_generate(
+        self,
+        report: AnalysisReport,
+        output_path,
+    ):
+        del self, report
+        output_path.write_bytes(b"%PDF-1.4\n%mock\n")
+        return output_path
 
     @asynccontextmanager
     async def fake_workflow_context() -> AsyncIterator[object]:
@@ -71,10 +75,7 @@ async def test_workflow_integration_persists_completed_report(
         fake_invoke_summary_llm,
     )
     monkeypatch.setattr(LiteratureRetrievalAgent, "_execute", fake_literature_execute)
-    monkeypatch.setattr(
-        "mitonexus.agents.synthesis_report.generate_report_pdf",
-        fake_generate_report_pdf,
-    )
+    monkeypatch.setattr(PDFReportGenerator, "generate", fake_generate)
     monkeypatch.setattr("mitonexus.tasks.analysis._workflow_context", fake_workflow_context)
 
     result = await _run_analysis_workflow_async(

@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     environment: Literal["development", "staging", "production"] = "development"
     debug: bool = False
     cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:3000"])
+    frontend_url: str = "http://localhost:3000"
 
     # Database
     database_url: PostgresDsn

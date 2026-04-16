@@ -1,0 +1,285 @@
+@page {
+  margin: 18mm 15mm;
+  size: A4;
+}
+
+:root {
+  --ink: #0f172a;
+  --muted: #475569;
+  --border: #dbe4f0;
+  --surface: #f8fafc;
+  --accent: #0f766e;
+  --accent-soft: #ccfbf1;
+  --danger: #be123c;
+  --warning: #b45309;
+  --success: #15803d;
+}
+
+body {
+  color: var(--ink);
+  font-family: "DejaVu Sans", Arial, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 8px;
+}
+
+h1 {
+  font-size: 23pt;
+  line-height: 1.15;
+}
+
+h2 {
+  border-bottom: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 16pt;
+  margin-bottom: 14px;
+  padding-bottom: 6px;
+}
+
+h3 {
+  font-size: 12pt;
+}
+
+p,
+ul,
+ol {
+  margin: 0 0 10px;
+}
+
+ul,
+ol {
+  padding-left: 18px;
+}
+
+section {
+  margin-top: 20px;
+}
+
+.cover {
+  background: linear-gradient(135deg, #ecfeff 0%, #f8fafc 45%, #fefce8 100%);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.subtitle,
+.reference,
+.meta-line,
+.subtle {
+  color: var(--muted);
+}
+
+.two-column {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.two-column > * {
+  display: table-cell;
+  padding-right: 8px;
+  vertical-align: top;
+  width: 50%;
+}
+
+.summary-card,
+.marker-card,
+.cascade-card,
+.complex-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 12px;
+  padding: 12px;
+}
+
+.card-header {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.card-header h3,
+.card-header .status-chip {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.card-header .status-chip {
+  text-align: right;
+}
+
+.status-chip {
+  background: #e2e8f0;
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+  text-transform: uppercase;
+}
+
+.value-display {
+  margin-bottom: 10px;
+}
+
+.value-display strong {
+  display: block;
+  font-size: 13pt;
+}
+
+.mitoscore-chart {
+  margin-top: 14px;
+}
+
+.mitoscore-gauge {
+  display: block;
+  height: 180px;
+  margin: 0 auto 14px;
+  width: 180px;
+}
+
+.gauge-track {
+  fill: none;
+  stroke: #dbe4f0;
+  stroke-width: 14;
+}
+
+.gauge-progress {
+  fill: none;
+  stroke: #14b8a6;
+  stroke-linecap: round;
+  stroke-width: 14;
+  transform: rotate(-90deg);
+  transform-origin: 90px 90px;
+}
+
+.gauge-label {
+  fill: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gauge-value {
+  fill: var(--ink);
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.component-chip-grid {
+  font-size: 8.5pt;
+}
+
+.component-chip {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  display: inline-block;
+  margin: 0 6px 6px 0;
+  padding: 5px 9px;
+}
+
+.component-chip strong {
+  margin-left: 4px;
+}
+
+.cascade-heatmap {
+  margin-bottom: 12px;
+}
+
+.heatmap-row {
+  margin-bottom: 8px;
+}
+
+.heatmap-row span,
+.heatmap-row strong {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.heatmap-row span {
+  width: 34%;
+}
+
+.heatmap-row strong {
+  padding-left: 8px;
+  width: 19%;
+}
+
+.heatmap-bar {
+  background: #e2e8f0;
+  border-radius: 999px;
+  display: inline-block;
+  height: 10px;
+  overflow: hidden;
+  vertical-align: middle;
+  width: 44%;
+}
+
+.heatmap-fill {
+  background: linear-gradient(90deg, #f59e0b 0%, #ef4444 100%);
+  height: 100%;
+}
+
+.empty-heatmap {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  color: var(--muted);
+  padding: 12px;
+}
+
+.activity-bar {
+  background: #e2e8f0;
+  border-radius: 999px;
+  height: 10px;
+  margin: 8px 0 10px;
+  overflow: hidden;
+}
+
+.activity-bar .fill {
+  background: linear-gradient(90deg, #ef4444 0%, #f59e0b 45%, #22c55e 100%);
+  height: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+thead {
+  background: #e2f7f4;
+}
+
+th,
+td {
+  border: 1px solid var(--border);
+  font-size: 9pt;
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+footer {
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  margin-top: 24px;
+  padding-top: 12px;
+}

@@ -1,0 +1,68 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">MitoNexus hero dashboard preview</title>
+  <desc id="desc">Illustrated overview of the MitoNexus analysis workspace with biomarker intake, 3D knowledge graph, mitochondrion overlay, and PDF report panels.</desc>
+  <defs>
+    <linearGradient id="bg" x1="96" y1="48" x2="1184" y2="672" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071426"/>
+      <stop offset="0.55" stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#172554"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#13233A"/>
+      <stop offset="1" stop-color="#0B1323"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#14B8A6"/>
+      <stop offset="1" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" rx="40" fill="url(#bg)"/>
+  <circle cx="186" cy="122" r="170" fill="#14B8A6" fill-opacity="0.1"/>
+  <circle cx="1120" cy="590" r="210" fill="#38BDF8" fill-opacity="0.08"/>
+
+  <text x="84" y="96" fill="#8BE3D2" font-size="18" font-family="Segoe UI, Arial, sans-serif" letter-spacing="5">MITONEXUS V1.0.0</text>
+  <text x="84" y="152" fill="white" font-size="52" font-weight="700" font-family="Segoe UI, Arial, sans-serif">Personalized mitochondrial intelligence</text>
+  <text x="84" y="198" fill="#CBD5E1" font-size="24" font-family="Segoe UI, Arial, sans-serif">Biomarker analysis, multi-agent reasoning, 3D visualization, and clinician-ready PDF reporting.</text>
+
+  <rect x="76" y="254" width="320" height="386" rx="28" fill="url(#card)" stroke="#24364E"/>
+  <text x="108" y="300" fill="#8BE3D2" font-size="16" font-family="Segoe UI, Arial, sans-serif" letter-spacing="3">BLOOD TEST INTAKE</text>
+  <rect x="108" y="328" width="256" height="42" rx="14" fill="#12243B"/>
+  <rect x="108" y="386" width="118" height="82" rx="18" fill="#14263E"/>
+  <rect x="246" y="386" width="118" height="82" rx="18" fill="#14263E"/>
+  <rect x="108" y="486" width="256" height="24" rx="12" fill="#0E7490" fill-opacity="0.32"/>
+  <rect x="108" y="522" width="256" height="24" rx="12" fill="#14B8A6" fill-opacity="0.22"/>
+  <rect x="108" y="564" width="180" height="44" rx="22" fill="url(#accent)"/>
+  <text x="148" y="592" fill="#03151B" font-size="18" font-weight="700" font-family="Segoe UI, Arial, sans-serif">Analyze panel</text>
+
+  <rect x="430" y="254" width="396" height="386" rx="28" fill="url(#card)" stroke="#24364E"/>
+  <text x="462" y="300" fill="#93C5FD" font-size="16" font-family="Segoe UI, Arial, sans-serif" letter-spacing="3">3D KNOWLEDGE GRAPH</text>
+  <circle cx="622" cy="448" r="76" fill="#0F172A" stroke="#334155"/>
+  <circle cx="546" cy="406" r="18" fill="#EF4444"/>
+  <circle cx="700" cy="386" r="14" fill="#38BDF8"/>
+  <circle cx="742" cy="468" r="22" fill="#22C55E"/>
+  <circle cx="628" cy="540" r="20" fill="#A855F7"/>
+  <circle cx="514" cy="498" r="16" fill="#F59E0B"/>
+  <path d="M546 406L700 386" stroke="#94A3B8" stroke-width="2"/>
+  <path d="M700 386L742 468" stroke="#22C55E" stroke-width="2"/>
+  <path d="M742 468L628 540" stroke="#A855F7" stroke-width="2"/>
+  <path d="M628 540L514 498" stroke="#38BDF8" stroke-width="2"/>
+  <path d="M514 498L546 406" stroke="#94A3B8" stroke-width="2"/>
+  <rect x="462" y="574" width="332" height="30" rx="15" fill="#0EA5E9" fill-opacity="0.16"/>
+  <text x="492" y="595" fill="#DBEAFE" font-size="15" font-family="Segoe UI, Arial, sans-serif">Marker -> gene -> cascade -> therapy path inspection</text>
+
+  <rect x="860" y="254" width="344" height="182" rx="28" fill="url(#card)" stroke="#24364E"/>
+  <text x="892" y="300" fill="#67E8F9" font-size="16" font-family="Segoe UI, Arial, sans-serif" letter-spacing="3">3D MITOCHONDRION</text>
+  <ellipse cx="1032" cy="352" rx="110" ry="54" fill="#082F49" stroke="#67E8F9" stroke-opacity="0.45"/>
+  <ellipse cx="1032" cy="352" rx="84" ry="36" fill="none" stroke="#38BDF8" stroke-dasharray="7 7"/>
+  <circle cx="968" cy="344" r="12" fill="#F59E0B"/>
+  <circle cx="1014" cy="372" r="12" fill="#EF4444"/>
+  <circle cx="1058" cy="334" r="12" fill="#22C55E"/>
+  <circle cx="1102" cy="364" r="12" fill="#38BDF8"/>
+
+  <rect x="860" y="458" width="344" height="182" rx="28" fill="url(#card)" stroke="#24364E"/>
+  <text x="892" y="504" fill="#FDE68A" font-size="16" font-family="Segoe UI, Arial, sans-serif" letter-spacing="3">PDF REPORT</text>
+  <rect x="892" y="530" width="280" height="18" rx="9" fill="#F8FAFC"/>
+  <rect x="892" y="562" width="280" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="892" y="586" width="230" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="892" y="612" width="140" height="12" rx="6" fill="#CBD5E1"/>
+</svg>

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mitonexus-backend"
-version = "0.1.0"
+version = "1.0.0"
 description = "MitoNexus AI-powered mitochondrial health platform — backend"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -36,6 +36,7 @@ dependencies = [
     "langfuse>=2.55.0",
     "structlog>=24.4.0",
     "weasyprint>=63.0",
+    "reportlab>=4.2.0",
     "jinja2>=3.1.0",
     "python-multipart>=0.0.20",
     "uuid7>=0.1.0",
@@ -60,6 +61,9 @@ package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+mitonexus = ["data/*.json", "templates/*.j2", "templates/*.css"]
 
 [tool.ruff]
 line-length = 100

@@ -1,10 +1,13 @@
 {
   "name": "mitonexus",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "scripts": {
+    "demo:backend": "uv run --directory apps/backend python scripts/demo.py",
+    "dev:backend": "uv run --directory apps/backend uvicorn mitonexus.main:app --reload",
     "dev:frontend": "pnpm --filter @mitonexus/frontend dev",
+    "build:frontend": "pnpm --filter @mitonexus/frontend build",
     "lint:frontend": "pnpm --filter @mitonexus/frontend lint",
     "type-check:frontend": "pnpm --filter @mitonexus/frontend type-check",
     "test:frontend": "pnpm --filter @mitonexus/frontend test"

@@ -23,7 +23,7 @@ def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
         title="MitoNexus API",
-        version="0.1.0",
+        version="1.0.0",
         description="AI-powered mitochondrial health platform",
         lifespan=lifespan,
     )
