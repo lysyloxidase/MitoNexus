@@ -19,7 +19,7 @@ async def neo4j_client() -> AsyncIterator[Neo4jClient]:
     await client.execute_write("MATCH (n) DETACH DELETE n")
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_kg_builder_merges_neo4j_subgraph_with_patient_context(
     neo4j_client: Neo4jClient,
 ) -> None:

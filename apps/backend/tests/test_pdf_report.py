@@ -98,7 +98,7 @@ def test_pdf_report_render_html_includes_core_sections() -> None:
     assert "PMID 12345678" in html
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_pdf_report_generate_writes_output(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,

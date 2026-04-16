@@ -8,7 +8,7 @@ from mitonexus.schemas.blood_marker import BloodMarkerInput, BloodTestInput
 from mitonexus.services import CascadeMapper, get_marker_engine
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_therapy_reasoning_prioritizes_homocysteine_support(
     db_session,
     monkeypatch: pytest.MonkeyPatch,

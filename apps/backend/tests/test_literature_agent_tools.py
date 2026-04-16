@@ -9,7 +9,7 @@ from mitonexus.agents.tools.literature_tools import (
 from mitonexus.models import Publication
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_search_indexed_publications_returns_ranked_publications(
     db_session,
     monkeypatch: pytest.MonkeyPatch,

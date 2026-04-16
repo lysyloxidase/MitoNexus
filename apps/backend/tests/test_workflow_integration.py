@@ -14,7 +14,7 @@ from mitonexus.services.pdf_report import PDFReportGenerator
 from mitonexus.tasks.analysis import _run_analysis_workflow_async
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_workflow_integration_persists_completed_report(
     db_session,
     monkeypatch: pytest.MonkeyPatch,

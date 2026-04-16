@@ -16,7 +16,7 @@ class FakeLLM:
         return Response()
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_biomarker_agent_generates_marker_and_cascade_assessments(db_session) -> None:
     patient = Patient(age=44, sex="M", test_date=datetime(2026, 4, 16, tzinfo=UTC))
     blood_test = BloodTest(

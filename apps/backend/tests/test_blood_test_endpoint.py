@@ -20,7 +20,7 @@ def _sample_payload() -> dict[str, object]:
     }
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_blood_test_analysis_flow(monkeypatch: pytest.MonkeyPatch) -> None:
     class FakeAsyncResult:
         id = "task-123"
