@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from mitonexus.api import api_router
 from mitonexus.config import get_settings
 from mitonexus.db.neo4j_session import close_neo4j_client
 from mitonexus.db.session import engine
@@ -37,6 +38,8 @@ def create_app() -> FastAPI:
     @app.get("/health")
     async def health() -> dict[str, str]:
         return {"status": "ok"}
+
+    app.include_router(api_router)
 
     return app
 
