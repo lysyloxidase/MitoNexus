@@ -1,0 +1,46 @@
+name: CI Frontend
+
+on:
+  push:
+    paths:
+      - "apps/frontend/**"
+      - "packages/shared-types/**"
+      - "package.json"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/ci-frontend.yml"
+  pull_request:
+    paths:
+      - "apps/frontend/**"
+      - "packages/shared-types/**"
+      - "package.json"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/ci-frontend.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Lint with Biome
+        run: pnpm --filter @mitonexus/frontend lint
+
+      - name: Type-check with TypeScript
+        run: pnpm --filter @mitonexus/frontend type-check
+
+      - name: Test with Vitest
+        run: pnpm --filter @mitonexus/frontend test

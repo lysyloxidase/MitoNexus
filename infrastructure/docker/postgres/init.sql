@@ -1,0 +1,10 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+SELECT 'CREATE DATABASE langfuse'
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM pg_database
+    WHERE datname = 'langfuse'
+)\gexec

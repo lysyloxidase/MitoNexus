@@ -1,0 +1,25 @@
+services:
+  backend:
+    volumes:
+      - ./apps/backend:/app/apps/backend
+    command: uvicorn mitonexus.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    command: pnpm dev --hostname 0.0.0.0
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+      - ./packages/shared-types:/app/packages/shared-types
+
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

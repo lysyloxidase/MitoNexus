@@ -1,0 +1,17 @@
+.git
+.venv
+**/.venv
+node_modules
+**/node_modules
+.next
+**/.next
+.pytest_cache
+**/.pytest_cache
+.mypy_cache
+**/.mypy_cache
+.ruff_cache
+**/.ruff_cache
+dist
+**/dist
+coverage
+**/coverage
