@@ -116,6 +116,64 @@ export type CascadeAssessment = {
   therapeutic_targets: string[];
 };
 
+export type GraphNodeType = "marker" | "gene" | "cascade" | "therapy" | "pathway";
+
+export type GraphEdgeType =
+  | "activation"
+  | "inhibition"
+  | "regulation"
+  | "correlation"
+  | "treats";
+
+export type GraphNode = {
+  id: string;
+  type: GraphNodeType;
+  label: string;
+  centrality: number;
+  color: string;
+  size: number;
+  abnormal: boolean;
+  metadata: Record<string, unknown>;
+};
+
+export type GraphEdge = {
+  source: string;
+  target: string;
+  type: GraphEdgeType;
+  confidence: number;
+  color: string;
+  width: number;
+};
+
+export type KnowledgeGraphLayout = "forceatlas2" | "umap" | "hybrid";
+
+export type KnowledgeGraphData = {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  layout: KnowledgeGraphLayout;
+  precomputed_positions: Record<string, [number, number, number]> | null;
+};
+
+export type ETCComplexId = "I" | "II" | "III" | "IV" | "V";
+
+export type ETCComplexState = {
+  complex_id: ETCComplexId;
+  activity: number;
+  contributing_markers: string[];
+  explanation: string;
+};
+
+export type MitochondrionVisualization = {
+  etc_complexes: ETCComplexState[];
+  overall_health: number;
+  annotations: Record<string, unknown>[];
+};
+
+export type ReportVisualizationPayload = {
+  knowledge_graph: KnowledgeGraphData;
+  mitochondrion: MitochondrionVisualization;
+};
+
 export type ReportStatus = "pending" | "processing" | "complete" | "failed";
 
 export type AnalysisReportPayload = {
@@ -132,7 +190,7 @@ export type AnalysisReportPayload = {
   cascade_assessments: CascadeAssessment[];
   therapy_plan: Record<string, unknown> | null;
   pdf_path: string | null;
-  visualization_data: Record<string, unknown> | null;
+  visualization_data: ReportVisualizationPayload | null;
   created_at: string;
   updated_at: string;
 };

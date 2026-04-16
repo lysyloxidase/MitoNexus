@@ -11,28 +11,9 @@ from mitonexus.schemas.cascade import CascadeAssessment, CascadeStatus
 from mitonexus.schemas.therapy import TherapyRecommendation
 from mitonexus.schemas.visualization import (
     ETCComplexState,
-    GraphEdge,
-    GraphNode,
     KnowledgeGraphData,
     MitochondrionVisualization,
 )
-
-MARKER_STATUS_COLORS: dict[MarkerStatus, str] = {
-    MarkerStatus.CRITICALLY_LOW: "#b91c1c",
-    MarkerStatus.LOW: "#dc2626",
-    MarkerStatus.SUBOPTIMAL_LOW: "#f59e0b",
-    MarkerStatus.OPTIMAL: "#10b981",
-    MarkerStatus.SUBOPTIMAL_HIGH: "#f59e0b",
-    MarkerStatus.HIGH: "#dc2626",
-    MarkerStatus.CRITICALLY_HIGH: "#b91c1c",
-}
-
-CASCADE_STATUS_COLORS: dict[CascadeStatus, str] = {
-    CascadeStatus.OPTIMAL: "#10b981",
-    CascadeStatus.MILDLY_AFFECTED: "#f59e0b",
-    CascadeStatus.MODERATELY_AFFECTED: "#f97316",
-    CascadeStatus.SEVERELY_AFFECTED: "#dc2626",
-}
 
 ETC_COMPLEX_MARKERS: dict[str, tuple[str, ...]] = {
     "I": ("homocysteine", "glucose", "ft3"),
@@ -241,105 +222,14 @@ def build_monitoring_plan(
     return monitoring
 
 
-def build_visualization_data(
+def build_mitochondrion_visualization(
     marker_analyses: list[MarkerAnalysis],
-    cascade_assessments: list[CascadeAssessment],
-    recommendations: list[TherapyRecommendation],
     mitoscore: float,
 ) -> dict[str, Any]:
-    """Create the knowledge-graph and mitochondrion overlay payload."""
+    """Create the patient-specific mitochondrion overlay payload."""
     abnormal_markers = [
         analysis for analysis in marker_analyses if analysis.status != MarkerStatus.OPTIMAL
     ]
-    abnormal_cascades = [
-        assessment
-        for assessment in cascade_assessments
-        if assessment.status != CascadeStatus.OPTIMAL
-    ]
-
-    nodes: list[GraphNode] = []
-    edges: list[GraphEdge] = []
-
-    for analysis in abnormal_markers:
-        nodes.append(
-            GraphNode(
-                id=f"marker:{analysis.marker_id}",
-                type="marker",
-                label=analysis.marker_name,
-                centrality=0.55,
-                color=MARKER_STATUS_COLORS[analysis.status],
-                size=14.0,
-                abnormal=True,
-                metadata={
-                    "marker_id": analysis.marker_id,
-                    "status": analysis.status.value,
-                    "value": analysis.value,
-                    "unit": analysis.unit,
-                },
-            )
-        )
-
-    for assessment in abnormal_cascades:
-        nodes.append(
-            GraphNode(
-                id=f"cascade:{assessment.cascade_id}",
-                type="cascade",
-                label=assessment.name,
-                centrality=0.7,
-                color=CASCADE_STATUS_COLORS[assessment.status],
-                size=18.0,
-                abnormal=True,
-                metadata={"status": assessment.status.value},
-            )
-        )
-
-    for recommendation in recommendations[:8]:
-        nodes.append(
-            GraphNode(
-                id=f"therapy:{recommendation.therapy_id}",
-                type="therapy",
-                label=recommendation.name,
-                centrality=0.62,
-                color="#10b981",
-                size=16.0,
-                metadata={"category": recommendation.category.value},
-            )
-        )
-
-    node_ids = {node.id for node in nodes}
-    for analysis in abnormal_markers:
-        for cascade_id in analysis.affected_cascades:
-            cascade_node_id = f"cascade:{cascade_id}"
-            if cascade_node_id not in node_ids:
-                continue
-            edges.append(
-                GraphEdge(
-                    source=f"marker:{analysis.marker_id}",
-                    target=cascade_node_id,
-                    type="regulation",
-                    confidence=0.72,
-                    color="#64748b",
-                    width=1.8,
-                )
-            )
-
-    for recommendation in recommendations[:8]:
-        therapy_node_id = f"therapy:{recommendation.therapy_id}"
-        for cascade_id in recommendation.targets_cascades:
-            cascade_node_id = f"cascade:{cascade_id}"
-            if therapy_node_id not in node_ids or cascade_node_id not in node_ids:
-                continue
-            edges.append(
-                GraphEdge(
-                    source=therapy_node_id,
-                    target=cascade_node_id,
-                    type="treats",
-                    confidence=min(max(recommendation.priority_score / 100.0, 0.4), 0.92),
-                    color="#10b981",
-                    width=2.4,
-                )
-            )
-
     etc_complexes = [
         build_etc_state("I", marker_analyses),
         build_etc_state("II", marker_analyses),
@@ -347,6 +237,7 @@ def build_visualization_data(
         build_etc_state("IV", marker_analyses),
         build_etc_state("V", marker_analyses),
     ]
+
     mitochondrion = MitochondrionVisualization(
         etc_complexes=etc_complexes,
         overall_health=round(mitoscore, 2),
@@ -360,11 +251,18 @@ def build_visualization_data(
             for analysis in abnormal_markers[:10]
         ],
     )
-    graph = KnowledgeGraphData(nodes=nodes, edges=edges)
+    return mitochondrion.model_dump(mode="json")
 
+
+def build_visualization_data(
+    knowledge_graph: KnowledgeGraphData,
+    marker_analyses: list[MarkerAnalysis],
+    mitoscore: float,
+) -> dict[str, Any]:
+    """Combine graph data with the mitochondrion overlay payload."""
     return {
-        "knowledge_graph": graph.model_dump(mode="json"),
-        "mitochondrion": mitochondrion.model_dump(mode="json"),
+        "knowledge_graph": knowledge_graph.model_dump(mode="json"),
+        "mitochondrion": build_mitochondrion_visualization(marker_analyses, mitoscore),
     }
 
 

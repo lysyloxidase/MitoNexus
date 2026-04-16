@@ -17,6 +17,7 @@ from mitonexus.services.report_builder import (
     build_visualization_data,
     generate_report_pdf,
 )
+from mitonexus.viz import KnowledgeGraphBuilder
 
 
 class SynthesisReportAgent(BaseAgent):
@@ -35,10 +36,14 @@ therapy priorities, and the overall mitochondrial score without making unsupport
         context: AgentExecutionContext,
     ) -> dict[str, object]:
         mitoscore, mitoscore_components = MitoScoreCalculator().calculate(state["marker_analyses"])
-        visualization_data = build_visualization_data(
+        knowledge_graph = await KnowledgeGraphBuilder().build(
             state["marker_analyses"],
             state["cascade_assessments"],
             state["therapy_recommendations"],
+        )
+        visualization_data = build_visualization_data(
+            knowledge_graph,
+            state["marker_analyses"],
             mitoscore,
         )
         therapy_plan = build_therapy_plan(
