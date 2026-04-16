@@ -1,6 +1,43 @@
 # Architecture
 
-![MitoNexus architecture diagram](assets/architecture-diagram.svg)
+```text
+Frontend (Next.js 15)
+  -> analyze form
+  -> report overview
+  -> 3D knowledge graph
+  -> 3D mitochondrion view
+
+        |
+        v
+
+Backend API (FastAPI)
+  -> intake endpoint
+  -> report API
+  -> PDF delivery
+  -> health checks
+
+        |
+        v
+
+Agent Runtime (LangGraph + Celery)
+  -> supervisor
+  -> biomarker specialist
+  -> literature specialist
+  -> therapy specialist
+  -> synthesis worker
+
+        |
+        v
+
+State + Infrastructure
+  -> Postgres + pgvector
+  -> Neo4j
+  -> Redis
+  -> Ollama
+  -> Langfuse
+  -> public biomedical APIs
+  -> WeasyPrint
+```
 
 ## System Overview
 

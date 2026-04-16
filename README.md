@@ -1,12 +1,44 @@
 # MitoNexus
 
-![MitoNexus platform preview](docs/assets/hero-dashboard.svg)
-
 MitoNexus is an AI/ML platform for personalized mitochondrial health analysis. It combines
 structured biomarker intake, a LangGraph-based multi-agent reasoning workflow, biomedical
 literature retrieval, 3D visualization, and PDF report generation in a single monorepo.
 
-![Architecture diagram](docs/assets/architecture-diagram.svg)
+```text
+Frontend (Next.js 15)
+  -> blood test intake
+  -> report UI
+  -> 3D graph + mitochondrion views
+
+        |
+        v
+
+Backend API (FastAPI)
+  -> patient + blood test persistence
+  -> report endpoints
+  -> PDF download
+
+        |
+        v
+
+Agent Runtime (LangGraph + Celery)
+  -> biomarker analysis
+  -> literature retrieval
+  -> therapy reasoning
+  -> synthesis
+
+        |
+        v
+
+Storage + Services
+  -> Postgres + pgvector
+  -> Neo4j
+  -> Redis
+  -> Ollama
+  -> Langfuse
+  -> public biomedical APIs
+  -> WeasyPrint
+```
 
 ## What Ships In v1.0.0
 
