@@ -5,12 +5,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from mitonexus.config import get_settings
+from mitonexus.db.neo4j_session import close_neo4j_client
+from mitonexus.db.session import engine
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     """Application lifespan handler."""
     yield
+    await close_neo4j_client()
+    await engine.dispose()
 
 
 def create_app() -> FastAPI:
