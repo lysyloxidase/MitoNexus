@@ -21,6 +21,8 @@ RUN apt-get update \
 
 COPY apps/backend/pyproject.toml ./pyproject.toml
 COPY apps/backend/README.md ./README.md
+COPY apps/backend/alembic.ini ./alembic.ini
+COPY apps/backend/alembic ./alembic
 COPY apps/backend/scripts ./scripts
 COPY apps/backend/src ./src
 

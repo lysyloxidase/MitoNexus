@@ -15,6 +15,13 @@ export function GraphLegend() {
           </div>
         ))}
       </div>
+      <div className="mt-4 space-y-2 border-t border-white/10 pt-4 text-sm text-slate-300">
+        <p>
+          Brighter nodes are directly targeted for this patient by the analysis workflow or therapy
+          plan.
+        </p>
+        <p>Dim nodes are background context from the broader network.</p>
+      </div>
     </div>
   );
 }

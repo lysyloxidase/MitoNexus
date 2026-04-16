@@ -9,9 +9,16 @@ import { NODE_COLOR_MAP, NODE_LABEL_MAP } from "@/lib/graph-styling";
 type NodeDetailPanelProps = {
   node: GraphNode;
   onClose: () => void;
+  isPatientTargeted?: boolean;
+  patientTargetReason?: string | null;
 };
 
-export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
+export function NodeDetailPanel({
+  node,
+  onClose,
+  isPatientTargeted = false,
+  patientTargetReason = null,
+}: NodeDetailPanelProps) {
   const metadataEntries = Object.entries(node.metadata).filter(([, value]) => value !== null);
 
   return (
@@ -49,6 +56,15 @@ export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
       {node.abnormal ? (
         <p className="mt-4 rounded-2xl border border-rose-400/25 bg-rose-500/10 px-4 py-3 text-sm leading-6 text-rose-100">
           This node is flagged as abnormal in the current patient context.
+        </p>
+      ) : null}
+
+      {isPatientTargeted && patientTargetReason ? (
+        <p className="mt-4 rounded-2xl border border-emerald-400/25 bg-emerald-500/10 px-4 py-3 text-sm leading-6 text-emerald-50">
+          <span className="block text-[11px] uppercase tracking-[0.2em] text-emerald-200/75">
+            Patient-targeted
+          </span>
+          <span className="mt-2 block">{patientTargetReason}</span>
         </p>
       ) : null}
 

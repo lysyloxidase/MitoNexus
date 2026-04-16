@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import asyncio
 from datetime import UTC, datetime, timedelta
 from typing import Any, Literal
 
@@ -22,6 +21,7 @@ from mitonexus.models import Publication
 from mitonexus.schemas import ClinicalTrial, Paper
 from mitonexus.services import DeduplicationService, EmbeddingService
 from mitonexus.tasks.celery_app import celery_app
+from mitonexus.tasks.runtime import run_async_in_worker
 
 MITO_MESH_TERMS = [
     "Mitochondria",
@@ -98,7 +98,7 @@ def refresh_mitocarta(self: Task) -> dict[str, int]:
 
 def _run_with_retry(task: Task, async_fn: Any) -> dict[str, int]:
     try:
-        return asyncio.run(async_fn())
+        return run_async_in_worker(async_fn())
     except Exception as exc:
         if task.request.retries >= task.max_retries:
             raise

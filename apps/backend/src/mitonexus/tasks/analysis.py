@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import asyncio
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Any
@@ -16,6 +15,7 @@ from mitonexus.agents.workflow import persistent_workflow
 from mitonexus.db.session import AsyncSessionLocal
 from mitonexus.models import AnalysisReport
 from mitonexus.tasks.celery_app import celery_app
+from mitonexus.tasks.runtime import run_async_in_worker
 
 
 @celery_app.task(bind=True, max_retries=2, name="mitonexus.tasks.analysis.run_analysis_workflow")
@@ -28,7 +28,7 @@ def run_analysis_workflow(
 ) -> dict[str, object]:
     """Run the LangGraph analysis workflow in a Celery worker."""
     try:
-        return asyncio.run(
+        return run_async_in_worker(
             _run_analysis_workflow_async(
                 patient_id=patient_id,
                 blood_test_id=blood_test_id,
@@ -36,8 +36,8 @@ def run_analysis_workflow(
             )
         )
     except Exception as exc:
-        asyncio.run(_mark_report_failed(report_id, str(exc)))
         if self.request.retries >= self.max_retries:
+            run_async_in_worker(_mark_report_failed(report_id, str(exc)))
             raise
         raise self.retry(exc=exc, countdown=10) from exc
 
